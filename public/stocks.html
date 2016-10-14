@@ -1,7 +1,33 @@
 <div class="container">
-    
     <div class="container well">
         <highchart id="chart1" config="chartConfig"></highchart>
+    </div>
+    
+    <div class="container well text-center" style="background-color: white">
+       
+             
+                <form class="form-inline text-center" name="addStockForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="stockInput" placeholder="Enter stock symbol for chart" ng-model="addstock">
+                    </div>
+                    <button type="submit" class="btn btn-default btn-primary" ng-click="addSymbol(addstock)">Go</button>
+                </form>
+                <span class="text-danger">{{notexist}}</span>
+            
+            <br>
+            
+                <ul class="list-group">
+                    <li ng-repeat="symbol in symbols" class="list-group-item">
+                        <button type="button" class="close" aria-label="Close" ng-click="removeSymbol(symbol)"><span aria-hidden="true">&times;</span></button>
+                        <p class="text-center">{{symbol}}</p>
+                        
+                    </li>
+                    
+                </ul>
+                
+           
+                
+ 
     </div>
 
 </div>
