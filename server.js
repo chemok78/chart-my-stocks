@@ -123,6 +123,13 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
           SYMBOLS.push(doc[i].symbol);
 
         }
+        
+        if(SYMBOLS.length == 0){
+        //if no stocks at all in database, initiaze the chart with 1 stock 
+          
+          SYMBOLS.push("AAPL");
+          
+        }
 
         yahooFinance.historical({
             //call Yahoo API with symbols array
@@ -254,13 +261,38 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
 
                   }
 
-                }; 
+                };
+                
+                var sendDB = {
+                //create object with symbol to insert into DB  
+                  
+                  "symbol": req.params.query
+                  
+                };
+                
+                
+                db.collection(STOCKS_COLLECTION).insertOne(sendDB, function(err,doc){
+                //add symbol to database here
+                
+                
+                                  
+                  if(err){
+                    
+                    handleError(res, err.message, "Failed to insert stock");
+                    
+                  } else {
+                    
+                      sendDB = {};
+                    
+                  }
+                  
+                  
+                });
+                
                 
                 res.status(200).send(sendData);
                 //send the array with the historical stock data back to Angular JS
-                
-                //edit database here
-                
+
                 
               
               } //if else
@@ -270,6 +302,29 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
     }); // yahooFinance.historical
     
   }); //app.get("/addquotes/:query"
+  
+  
+  app.get("/removequotes/:query", function(req,res){
+  //route to remove a stock from database
+    
+    db.collection(STOCKS_COLLECTION).deleteOne({"symbol": req.params.query}, function(err,doc){
+      
+      if(err){
+        
+        handleError(res,err.message, "Failed to remove stock from DB");
+        
+      } else {
+        
+        console.log("Stock successfully deleted");
+        
+      }
+      
+      
+    });
+    
+    
+    
+  })
 
 
 }); //mongodb.MongoClient.connect
