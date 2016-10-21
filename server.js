@@ -23,6 +23,24 @@ var STOCKS_COLLECTION = "stocks";
 var app = express();
 //create an instance of Express app
 
+/*Setup Socket.io*/
+
+var server = require('http').Server(app);
+
+var io = require('socket.io')(server);
+
+io.on('connection', function(socket){
+  
+   console.log("someone connected!");
+   
+   socket.on('disconnect', function(){
+     
+     console.log("someone disconnected!");
+     
+   })
+  
+});
+
 /*Express Middleware*/
 
 app.use(express.static(__dirname + "/public"));
@@ -48,11 +66,18 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
 
   console.log("successfully connected to the database");
 
-  var server = app.listen(process.env.PORT || 8080, function() {
+  /*var server = app.listen(process.env.PORT || 8080, function() {
 
     var port = server.address().port;
     console.log("App is now running on port", port);
 
+  });*/
+  
+  server.listen(process.env.PORT || 8080, function(){
+    
+    console.log("server started!");
+    
+    
   });
   
    /*Date Parsing to get right format Yahoo API call*/
@@ -72,8 +97,8 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
         var unixDate = now.getTime();
         //convert the current date to Unix time
 
-        var unixOneYear = unixDate - 157784760000;
-        //Extract the milliseconds from 5 years 
+        var unixOneYear = unixDate - 94670856000;
+        //Extract the milliseconds from 3 years 
 
         var dateOneYear = new Date(unixOneYear);
         //convert Unix time back to date
@@ -227,9 +252,10 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
               
               if(quotes.length === 0){
               //if quotes array is empty, the stock does not exist
-              //send empty array to Angular Front end, where it will handle the error
+              //emit empty array to all clients in Angular Front end, where it will handle the error
               
-              res.status(200).send(quotes);
+              io.emit('add', quotes);
+          
               
               } else {
               
@@ -288,12 +314,9 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
                   
                   
                 });
-                
-                
-                res.status(200).send(sendData);
-                //send the array with the historical stock data back to Angular JS
 
-                
+                io.emit('add', sendData);
+                //emit the array with the historical stock data back to all clients in Angular JS
               
               } //if else
 
@@ -306,6 +329,8 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
   
   app.get("/removequotes/:query", function(req,res){
   //route to remove a stock from database
+  
+  console.log(req.params.query);
     
     db.collection(STOCKS_COLLECTION).deleteOne({"symbol": req.params.query}, function(err,doc){
       
@@ -316,6 +341,8 @@ mongodb.MongoClient.connect(process.env.DB_URL, function(err, database) {
       } else {
         
         console.log("Stock successfully deleted");
+        
+        io.emit('remove', req.params.query);
         
       }
       
