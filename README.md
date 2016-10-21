@@ -1,8 +1,8 @@
 Welcome to WeChart: a stocks charting app that syncs live across clients
 
-Build with Node, Express, Angular JS, MongoDB and Socket.IO
+Build with Node, Express, Angular JS, MongoDB, Socket.IO and HighCharts JS
 
-Live app at https://chartmystocks.herokuapp.com/
+Live app at https://wechart.herokuapp.com/
 
 ## User Stories:
 
