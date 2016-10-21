@@ -1,6 +1,6 @@
-Welcome to Chart My Stocks: stocks charting app that syncs live across clients
+Welcome to WeChart: a stocks charting app that syncs live across clients
 
-Build with Node, Express, MongoDB and Socket.IO
+Build with Node, Express, Angular JS, MongoDB and Socket.IO
 
 Live app at https://chartmystocks.herokuapp.com/
 
@@ -12,7 +12,7 @@ Live app at https://chartmystocks.herokuapp.com/
 
 3) I can see changes in real-time when any other user adds or removes a stock. 
 
-##A few key functions highlighted
+
 
 
 
